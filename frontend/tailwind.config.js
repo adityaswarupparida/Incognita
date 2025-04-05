@@ -12,6 +12,14 @@ export default {
         'alegreya': ["Alegreya", 'serif'],
         'cardo': ["Cardo", 'serif'],
         'neuton': ["Neuton", 'serif'],
+      },
+      keyframes: {
+        'slow-pulse': {
+          '50%': { opacity: 0 }
+        }
+      },
+      animation: {
+        'slow-pulse': 'slow-pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
       }
     },
   },
