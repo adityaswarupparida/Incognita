@@ -1,31 +1,28 @@
 import { Mic, MicOff, Video, VideoOff } from "lucide-react";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { VideoButton } from "./ui/video-button";
+import { VideoContext } from "../context/videoContext";
 
-export const VideoComponent = ({ videoRef }: { 
-    videoRef: RefObject<HTMLVideoElement>;
-}) => {
-    const [activeVideo, setActiveVideo] = useState(true);
-    const [activeAudio, setActiveAudio] = useState(true);
-    const [videoStream, setVideoStream] = useState<MediaStream>();
-    const [audioStream, setAudioStream] = useState<MediaStream>();
+export const VideoComponent = () => {
+    const { constraints, setConstraints } = useContext(VideoContext);
+    const videoRef = useRef<HTMLVideoElement>(null);
     const videonotstarted = useRef(true);
     const audionotstarted = useRef(true);
 
     const toggleVideo = async () => {
-        if (activeVideo) {
+        if (constraints.video) {
             if (!videoRef.current || !videonotstarted.current) return;
             // to prevent turning on camera twice initially
             videonotstarted.current = false;
             const stream = await window.navigator.mediaDevices.getUserMedia({
                 video: true
             });
-            setVideoStream(stream);
+            setConstraints(cns => ({...cns, videostream: stream}));
             videoRef.current.srcObject = stream;
             videoRef.current.play();
         } else {
-            if (videoStream === undefined || !videoRef.current) return;
-            videoStream.getVideoTracks().forEach(track => {
+            if (constraints.videostream === undefined || !videoRef.current) return;
+            constraints.videostream.getVideoTracks().forEach(track => {
                 if (track.readyState == 'live')
                     track.stop();
             })
@@ -35,16 +32,16 @@ export const VideoComponent = ({ videoRef }: {
     }
 
     const toggleAudio = async () => {
-        if (activeAudio) {
+        if (constraints.audio) {
             if (!audionotstarted.current) return;
             audionotstarted.current = false;
             const stream = await window.navigator.mediaDevices.getUserMedia({
                 audio: true
             });
-            setAudioStream(stream);
+            setConstraints(cns => ({...cns, audiostream: stream}));
         } else {
-            if (!audioStream) return;
-            audioStream.getAudioTracks().forEach(track => {
+            if (!constraints.audiostream) return;
+            constraints.audiostream.getAudioTracks().forEach(track => {
                 if (track.readyState == "live")
                     track.stop();
             })
@@ -54,11 +51,11 @@ export const VideoComponent = ({ videoRef }: {
 
     useEffect(() => {
         toggleVideo();
-    }, [activeVideo])
+    }, [constraints.video])
 
     useEffect(() => {
         toggleAudio();
-    }, [activeAudio])
+    }, [constraints.audio])
 
     return (
         <div className="relative w-[640px] h-[480px]">
@@ -66,16 +63,16 @@ export const VideoComponent = ({ videoRef }: {
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="flex gap-6">
                     <VideoButton 
-                        active={activeVideo} 
+                        active={constraints.video} 
                         activeIcon={<Video size={33}/>} 
                         passiveIcon={<VideoOff size={33}/>} 
-                        onClick={() => setActiveVideo(active => !active)}
+                        onClick={() => setConstraints(cns => ({...cns, video: !constraints.video }))}
                     />
                     <VideoButton 
-                        active={activeAudio} 
+                        active={constraints.audio} 
                         activeIcon={<Mic size={29}/>} 
                         passiveIcon={<MicOff size={29}/>} 
-                        onClick={() => setActiveAudio(active => !active)}
+                        onClick={() => setConstraints(cns => ({...cns, audio: !constraints.audio }))}
                     />           
                 </div>
             </div>
