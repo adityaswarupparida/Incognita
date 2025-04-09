@@ -9,7 +9,7 @@ function App() {
 		<BrowserRouter>
 			<Routes>
 				<Route path='/' element={<Home/>}></Route>
-				<Route path='/chat/:roomId' element={<Chat roomId='765FT9' userId='Rony' />}></Route>
+				<Route path='/chat/:roomId' element={<Chat />}></Route>
 				<Route path='/video/:roomId' element={<VideoPreview />}></Route>
 			</Routes>
 		</BrowserRouter>

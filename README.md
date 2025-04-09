@@ -9,7 +9,7 @@ Incognita is an open-source, anonymous, real-time video and text chat applicatio
 - **Scalable Chat and Video**:
   - Up to **50+ participants** can chat with each other in a single room.
   - Any **2 people** can initiate a private one-on-one video call.
-- Real-Time Communication: Users can chat and exchange video/audio messages in real-time.
+- **Real-Time Communication**: Users can chat and exchange video/audio messages in real-time.
 
 ## Tech Stack
 
@@ -35,3 +35,11 @@ npm install
 npm run dev
 ```
 4. Access the application at http://localhost:5173
+
+## Screenshots:
+
+### Home Page:
+<img width="1710" alt="Screenshot 2025-04-10 at 1 37 58 AM" src="https://github.com/user-attachments/assets/779472ee-b302-40fb-bcec-2fe7826a7c95" />
+
+### Join your room:
+<img width="1706" alt="Screenshot 2025-04-10 at 1 37 38 AM" src="https://github.com/user-attachments/assets/6e88963f-a8c3-4fae-99c8-12179fcbceca" />

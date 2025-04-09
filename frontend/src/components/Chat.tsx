@@ -1,11 +1,9 @@
+import { Copy } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom';
 
 
-export const Chat = ({ roomId, userId }: {
-    roomId: string;
-    userId: string;
-}) => {
-   
+export const Chat = () => {   
     const [messages, setMessages] = useState([
         { type: "join", payload: { message: "Kohli joined the chat", }}, 
         { type: "chat", payload: { message: "Hello", userId: "Kohli" }}, 
@@ -16,8 +14,12 @@ export const Chat = ({ roomId, userId }: {
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const wsRef = useRef(null);
+    const params = useParams();
+	const roomId = params.roomId!;
+	let name = useRef("");
 	
 	useEffect(() => {
+		name.current = window.localStorage.getItem("name") ?? "";
 		const ws = new WebSocket('ws://localhost:8080');
 
 		//@ts-ignore
@@ -32,7 +34,7 @@ export const Chat = ({ roomId, userId }: {
 			  type: "join",
 			  payload: {
 				roomId: roomId,
-                userId: userId,
+                userId: name.current,
 			  }
 			}))
 		}
@@ -42,14 +44,23 @@ export const Chat = ({ roomId, userId }: {
 	}, []);
 
 	return (
-		<div className='h-screen font-merriweather'>
+		<div className='h-screen bg-black overflow-hidden'>
 			<div className='h-[90vh] my-4'>
-				<div className='bg-black w-full h-full rounded-lg px-2 overflow-y-scroll'>
-					<div className={`text-white bg-black rounded-lg`}>RoomId: {roomId}</div>
-					{messages.map(message => 
+				<div className={`text-white flex gap-3 p-3 backdrop-blur-3xl border-b border-stone-800 shadow-lg`}>
+					<div className="text-2xl font-bold"> Code: {roomId} </div>
+                    <button className="cursor-pointer p-0 border-none focus:outline-none hover:text-white"
+                            onClick={() => {
+                                (async () => await navigator.clipboard.writeText(roomId))();
+                            }}
+                    >
+                        <Copy size={'16'}/>
+                    </button>
+				</div>
+				<div className='bg-black w-full h-full rounded-lg px-2 overflow-y-scroll font-merriweather'>
+					{messages.map((message, index) => 
                     message.type === 'chat' ? (
-                        <div className={`flex flex-col ${ message.payload.userId !== userId ? "items-start" : "items-end"}`}>
-                            <span className='text-white'>{message.payload.userId}</span>
+                        <div className={`flex flex-col ${ message.payload.userId !== name.current ? "items-start" : "items-end"}`}>
+                            { (!index || index > 0 && message.payload.userId !== messages[index-1].payload.userId) && <span className='text-white'>{message.payload.userId}</span> }
                             <span className='bg-white text-black rounded-md px-3 py-2 my-2 max-w-prose text-wrap'>
                                 {message.payload.message}
                             </span>
@@ -65,9 +76,9 @@ export const Chat = ({ roomId, userId }: {
                 )}
 				</div>
 			</div>
-			<div className='flex gap-4'>
-				<input ref={inputRef} type='text' placeholder='Type a message here ...' className='p-2 w-full rounded-lg'></input>
-				<button onClick={
+			<div className='flex gap-4 p-3 backdrop-blur-3xl font-merriweather'>
+				<input ref={inputRef} type='text' placeholder='Type a message here ...' className='p-2 w-full rounded-lg border border-stone-700'></input>
+				<button className='border border-stone-700' onClick={
 					() => {
 						if(inputRef.current && inputRef.current.value !== '') {
 							const msg = inputRef.current?.value;
@@ -76,7 +87,7 @@ export const Chat = ({ roomId, userId }: {
 								type: "chat",
 								payload: {
 									message: msg,
-                                    userId: userId
+                                    userId: name.current
 								}
 							}))
 							inputRef.current.value = "";
