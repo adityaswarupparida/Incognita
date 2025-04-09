@@ -16,23 +16,18 @@ export const Chat = ({ roomId, userId }: {
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const wsRef = useRef(null);
-
-	console.log("App rendered: Before use-effect");
 	
 	useEffect(() => {
 		const ws = new WebSocket('ws://localhost:8080');
-		console.log("Websocket is live");
 
 		//@ts-ignore
 		wsRef.current = ws;
 		ws.onmessage = (event) => {
-			console.log("Enter into onmessage handler" + event.data);
 			setMessages(msgs => [...msgs, JSON.parse(event.data)]);
 		}
 
 		// Need to work later on joining room
 		ws.onopen = () => {
-			console.log("Enter into onopen handler");
 			ws.send(JSON.stringify({
 			  type: "join",
 			  payload: {
@@ -43,12 +38,8 @@ export const Chat = ({ roomId, userId }: {
 		}
 		return () => {
 			ws.close();
-			console.log("Websocket is closed");
 		}
 	}, []);
-
-	console.log("App rendered: After use-effect");
-
 
 	return (
 		<div className='h-screen font-merriweather'>
@@ -96,28 +87,3 @@ export const Chat = ({ roomId, userId }: {
 		</div>
 	)
 }
-
-
- /*
-    {
-        type: "join",
-        payload: {
-            message: "Kohli joined the chat"
-        }
-    }
-
-    {
-        type: "chat",
-        payload: {
-            message: "Hey There",
-            userId : "Kohli"
-        }
-    }
-
-    {
-        type: "left",
-        payload: {
-            message: "Kohli left the chat"
-        }
-    }
-*/

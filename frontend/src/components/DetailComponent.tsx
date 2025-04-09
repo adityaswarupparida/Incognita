@@ -7,7 +7,7 @@ export const DetailComponent = () => {
     const navigate = useNavigate();
     const [pasteboard, setPasteboard] = useState(false);
     const [choose, setChoose] = useState(0);
-    const randomCode = '765FT9'; //'765FT9'; EF30CB
+    const randomCode = useRef(randomCodeGenerator());
     const nameRef = useRef<HTMLInputElement>(null);
     const codeRef = useRef<HTMLInputElement>(null);
     
@@ -41,8 +41,8 @@ export const DetailComponent = () => {
                         }
 
                         window.localStorage.setItem('name', nameRef.current.value);
-                        if (!choose) navigate(`/chat/${randomCode}`)
-                        else navigate(`/video/${randomCode}`)
+                        if (!choose) navigate(`/chat/${codeRef.current.value}`)
+                        else navigate(`/video/${codeRef.current.value}`)
                     }}
                 >
                     Join room
@@ -51,10 +51,10 @@ export const DetailComponent = () => {
             { pasteboard && <div className="w-full h-32 my-3 px-3 rounded-lg bg-neutral-800 flex flex-col justify-center items-center gap-2">
                 <div className="text-gray-400 text-sm"> Share this code with your friend </div>
                 <div className="flex items-center gap-3">
-                    <div className="text-2xl font-bold"> {randomCode} </div>
+                    <div className="text-2xl font-bold"> {randomCode.current} </div>
                     <button className="cursor-pointer p-0 border-none focus:outline-none hover:text-white"
                             onClick={() => {
-                                (async () => await navigator.clipboard.writeText(randomCode))();
+                                (async () => await navigator.clipboard.writeText(randomCode.current))();
                             }}
                     >
                         <Copy size={'16'}/>
@@ -81,4 +81,13 @@ const ChooseButton = ({ choose, chosen, onClick }: {
             {options[choose].icon} {options[choose].title}
         </button>
     );
+}
+
+const randomCodeGenerator = () => {
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+        code += possible.charAt(Math.floor(Math.random() * possible.length)).toUpperCase();
+    }
+    return code;
 }

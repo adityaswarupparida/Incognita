@@ -1,5 +1,5 @@
 import { Mic, MicOff, Video, VideoOff } from "lucide-react";
-import { useContext, useEffect, useRef } from "react";
+import { useContext } from "react";
 import { VideoButton } from "./ui/video-button";
 import { VideoContext } from "../context/videoContext";
 import { useVideo } from "../hooks/useVideo";

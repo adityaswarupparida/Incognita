@@ -1,12 +1,9 @@
-// import { useNavigate } from "react-router-dom"
 import { CurrentDateTime } from "./CurrentDateTime"
 import { DetailComponent } from "./DetailComponent";
 import { VenetianMask } from "lucide-react";
 import { useState } from "react";
 
 export const Home = () => {
-    // const navigate = useNavigate();
-    // const randomCode = '765FT9'; //'765FT9'; EF30CB
     const [modal, setModal] = useState(false);
 
     return <div className="h-screen relative">
@@ -18,12 +15,6 @@ export const Home = () => {
                         Incognita
                     </span>
                 </div>
-                {/* <button onClick={() => {
-                    navigate(`/chat/${randomCode}`)
-                }}>Chat</button>
-                <button onClick={() => {
-                    navigate(`/video/${randomCode}`)
-                }}>Video</button> */}
                 <div className="flex justify-end items-center gap-3">
                     <div className="text-xl">{<CurrentDateTime format="long" />}</div>
                 </div>

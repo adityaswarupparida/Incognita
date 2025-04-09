@@ -34,7 +34,6 @@ wss.on("connection", (socket) => {
                         }));
                     }
                 })
-                console.log("user connected");
                 break;
         
             case "chat":
@@ -69,29 +68,6 @@ wss.on("connection", (socket) => {
                 }));
             }
         })
-        sockets = sockets.filter((skt) => skt.socket != socket);
-        
-        console.log("user disconnected");
+        sockets = sockets.filter((skt) => skt.socket != socket);        
     });
 })
-
-//  Broadcasting Code:
-//     let userConnectedCount = 0;
-//     let sockets: WebSocket[] = [];
-//     sockets.push(socket);
-//     // socket.send("user connected.");
-//     userConnectedCount = userConnectedCount + 1;
-//     console.log("user connected #"+userConnectedCount);
-
-
-//     socket.on("message", (message) => {
-//         sockets.forEach((socket) => {
-//             socket.send(message.toString());
-//         })
-//     })
-
-//     socket.on("close", () => {
-//         userConnectedCount = userConnectedCount - 1;
-//         console.log("user disconnected #"+userConnectedCount);
-//         sockets = sockets.filter((s => s != socket));
-//     })
