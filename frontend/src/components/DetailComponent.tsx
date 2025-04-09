@@ -25,16 +25,22 @@ export const DetailComponent = () => {
                 <button className="w-full bg-white text-black"
                     onClick={() => {
                         if (!nameRef.current || !codeRef.current) return;
+                        let err = false;
                         if (nameRef.current.value.trim() === "") {
                             alert("Please fill the name correctly.");
-                            nameRef.current.value = "";
+                            err = true;
                         }
                         if (codeRef.current.value.length !== 6) {
                             alert("Please fill a valid code or, generate a new one.");
-                            codeRef.current.value = "";
+                            err = true;
                         }
-                        console.log(nameRef.current.value);
-                        console.log(codeRef.current.value);
+                        if (err) {
+                            nameRef.current.value = "";
+                            codeRef.current.value = "";
+                            return;
+                        }
+
+                        window.localStorage.setItem('name', nameRef.current.value);
                         if (!choose) navigate(`/chat/${randomCode}`)
                         else navigate(`/video/${randomCode}`)
                     }}

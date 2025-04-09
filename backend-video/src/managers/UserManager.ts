@@ -1,62 +1,46 @@
 import { WebSocket } from "ws";
 import { RoomManager } from "./RoomManager";
-
-enum RTCEventType {
-    JOINED,
-    SEND_OFFER,
-    OFFER,
-    ANSWER,
-    LEFT
-}
-
-export interface User {
-    userId : string;
-    socket : WebSocket;
-}
-
-interface RTCPayload {
-    type     : string;
-    userId   : string;
-    roomcode : string;
-    socket   : WebSocket;
-    payload  : {
-        offer  ?: RTCSessionDescription;
-        answer ?: RTCSessionDescription;
-    } 
-}
+import { RTCPayload, User } from "../types";
 
 export class UserManager {
     private roomManager: RoomManager;
     constructor() {
         this.roomManager = new RoomManager();
     }
-    addUser(data: RTCPayload) {
+    addUser(socket: WebSocket, data: RTCPayload) {
         const user: User = {
-            userId: data.userId,
-            socket: data.socket
+            userId: data.payload.userId,
+            socket: socket
         }
-        this.roomManager.createRoom(user, data.roomcode);
+        this.roomManager.createRoom(user, data.payload.roomcode);
     }
     removeUser(data: RTCPayload) {
-        this.roomManager.destroyRoom(data.roomcode);
+        this.roomManager.destroyRoom(data.payload.roomcode);
     }
-    handleEvents(parsedData: RTCPayload) {
+    handleEvents(socket: WebSocket, parsedData: RTCPayload) {
         const parsedType = parsedData.type;
-        const parsedUser = parsedData.userId;
-        const parsedCode = parsedData.roomcode;
+        const parsedCode = parsedData.payload.roomcode;
 
         switch (parsedType) {
             case 'OFFER':
                 const offer = parsedData.payload.offer;
                 if (offer === undefined) return;
-                this.roomManager.onOffer(parsedCode, parsedUser, offer);
+                this.roomManager.onOffer(parsedCode, socket, offer);
                 break;
 
             case 'ANSWER':
                 const answer = parsedData.payload.answer;
                 if (answer === undefined) return;
-                this.roomManager.onAnswer(parsedCode, parsedUser, answer);
+                this.roomManager.onAnswer(parsedCode, socket, answer);
                 break;  
+
+            case 'ADD_ICE_CANDIDATE':
+                const candidate = parsedData.payload.candidate;
+                const fromUser = parsedData.payload.from;
+
+                if (candidate === undefined || fromUser === undefined) return;
+                this.roomManager.onIceCandidate(parsedCode, socket, candidate, fromUser);
+                break;
 
             default:
                 break;

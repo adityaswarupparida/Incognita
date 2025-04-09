@@ -1,4 +1,5 @@
-import { User } from "./UserManager";
+import { WebSocket } from "ws";
+import { User } from "../types";
 
 export class RoomManager {
     private roomUsers: Map<string, User[]>;
@@ -33,24 +34,38 @@ export class RoomManager {
     destroyRoom(code: string) {
         this.roomUsers.delete(code);
     }
-    onOffer(code: string, userId: string, offer: RTCSessionDescription) {
+    onOffer(code: string, socket: WebSocket, offer: RTCSessionDescription) {
         const users = this.roomUsers.get(code);
         if (users === undefined) return;
 
-        const remoteUser = users[0].userId === userId ? users[1] : users[0];
+        const remoteUser = users[0].socket === socket ? users[1] : users[0];
         remoteUser.socket.send(JSON.stringify({
             type: "OFFER",
-            offer: offer
+            offer: offer,
+            code : code
         }))
     }
-    onAnswer(code: string, userId: string, answer: RTCSessionDescription) {
+    onAnswer(code: string, socket: WebSocket, answer: RTCSessionDescription) {
         const users = this.roomUsers.get(code);
         if (users === undefined) return;
 
-        const remoteUser = users[0].userId === userId ? users[1] : users[0];
+        const remoteUser = users[0].socket === socket ? users[1] : users[0];
         remoteUser.socket.send(JSON.stringify({
             type: "ANSWER",
-            offer: answer
+            answer: answer,
+            code : code
+        }))
+    }
+    onIceCandidate(code: string, socket: WebSocket, candidate: RTCIceCandidate, from: "SENDER" | "RECEIVER") {     
+        const users = this.roomUsers.get(code);
+        if (users === undefined) return;
+
+        const toUser = users[0].socket === socket ? users[1] : users[0];
+        toUser.socket.send(JSON.stringify({
+            type: "ADD_ICE_CANDIDATE",
+            candidate: candidate,
+            from: from,
+            code : code
         }))
     }
 }

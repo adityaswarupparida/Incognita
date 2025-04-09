@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router-dom"
+// import { useNavigate } from "react-router-dom"
 import { CurrentDateTime } from "./CurrentDateTime"
 import { DetailComponent } from "./DetailComponent";
 import { VenetianMask } from "lucide-react";
 import { useState } from "react";
 
 export const Home = () => {
-    const navigate = useNavigate();
-    const randomCode = '765FT9'; //'765FT9'; EF30CB
+    // const navigate = useNavigate();
+    // const randomCode = '765FT9'; //'765FT9'; EF30CB
     const [modal, setModal] = useState(false);
 
     return <div className="h-screen relative">
