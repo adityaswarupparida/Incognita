@@ -2,21 +2,23 @@ import { Copy } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom';
 
+interface Message {
+    type: string;
+    payload: {
+        message: string;
+        userId?: string;
+    }
+}
 
 export const Chat = () => {   
-    const [messages, setMessages] = useState([
-        { type: "join", payload: { message: "Kohli joined the chat", }}, 
-        { type: "chat", payload: { message: "Hello", userId: "Kohli" }}, 
-        { type: "chat", payload: { message: "Hey There", userId: "Rohit" }}, 
-        { type: "chat", payload: { message: "Good Morning", userId: "Kohli" }}, 
-        { type: "chat", payload: { message: "Very good morning! Hope you are having awesome day", userId: "Rohit" }},
-        { type: "left", payload: { message: "Kohli left the chat", }}, ]);
+	const params = useParams();
+	const roomId = params.roomId!;
+	//@ts-ignore
+    const [messages, setMessages] = useState<Message[]>([{ type: "create", payload: { message: "Room "+ roomId +" was created" }}]);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const wsRef = useRef(null);
-    const params = useParams();
-	const roomId = params.roomId!;
-	let name = useRef("");
+	const name = useRef("");
 	
 	useEffect(() => {
 		name.current = window.localStorage.getItem("name") ?? "";
@@ -58,22 +60,23 @@ export const Chat = () => {
 				</div>
 				<div className='bg-black w-full h-full rounded-lg px-2 overflow-y-scroll font-merriweather'>
 					{messages.map((message, index) => 
-                    message.type === 'chat' ? (
-                        <div className={`flex flex-col ${ message.payload.userId !== name.current ? "items-start" : "items-end"}`}>
-                            { (!index || index > 0 && message.payload.userId !== messages[index-1].payload.userId) && <span className='text-white'>{message.payload.userId}</span> }
-                            <span className='bg-white text-black rounded-md px-3 py-2 my-2 max-w-prose text-wrap'>
-                                {message.payload.message}
-                            </span>
-                        </div> 
-                    ) : (
-                        <div className={`flex flex-col items-center justify-center`}>
-                            <span className='bg-neutral-600 opacity-70 text-white/95 text-xs rounded-md px-3 py-1 my-2 max-w-prose text-wrap'>
-                                {message.payload.message}
-                            </span>
-                        </div>
-                    )                
-                
-                )}
+						<div key={index}>
+							{ message.type === 'chat' ? (
+								<div className={`flex flex-col ${ message.payload.userId !== name.current ? "items-start" : "items-end"}`}>
+									{ (!index || index > 0 && message.payload.userId !== messages[index-1].payload.userId) && <span className='text-white'>{message.payload.userId}</span> }
+									<span className='bg-white text-black rounded-md px-3 py-2 my-2 max-w-prose text-wrap'>
+										{message.payload.message}
+									</span>
+								</div> 
+							) : (
+								<div className={`flex flex-col items-center justify-center`}>
+									<span className='bg-neutral-600 opacity-70 text-white/95 text-xs rounded-md px-3 py-1 my-2 max-w-prose text-wrap'>
+										{message.payload.message}
+									</span>
+								</div>
+							) }               
+						</div>
+                	)}
 				</div>
 			</div>
 			<div className='flex gap-4 p-3 backdrop-blur-3xl font-merriweather'>
