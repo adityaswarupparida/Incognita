@@ -43,3 +43,12 @@ npm run dev
 
 ### Join your room:
 <img width="1706" alt="Screenshot 2025-04-10 at 1 37 38 AM" src="https://github.com/user-attachments/assets/6e88963f-a8c3-4fae-99c8-12179fcbceca" />
+
+### Chat room:
+<img width="1710" alt="Screenshot 2025-04-10 at 3 17 19 AM" src="https://github.com/user-attachments/assets/e134bbe5-0f4b-4ba7-9f27-0d48ad40a7e8" />
+
+### Video preview:
+<img width="1710" alt="Screenshot 2025-04-11 at 12 44 41 AM" src="https://github.com/user-attachments/assets/6d72586c-e6b8-4e71-8155-5c2c4a98d584" />
+
+### Video room:
+<img width="1709" alt="Screenshot 2025-04-11 at 12 43 06 AM" src="https://github.com/user-attachments/assets/c5d486b5-8981-44f2-8ed4-0acc8aa16114" />
